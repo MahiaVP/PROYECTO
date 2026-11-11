@@ -121,7 +121,7 @@ public class Principal {
         JPanel mainPhPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 100, 100));
         mainPhPanel.setOpaque(false);
 
-        double phNumber = 7;
+        double phNumber = 7.9;
         JPanel phPanel = new JPanel();
         phPanel.setOpaque(true);
         phPanel.setPreferredSize(new Dimension(400, 400));
