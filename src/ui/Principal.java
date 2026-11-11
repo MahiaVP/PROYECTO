@@ -2,8 +2,10 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import arduino.ArduinoReader;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Scanner;
 
 public class Principal {
 
@@ -18,6 +20,8 @@ public class Principal {
         mainPanel.setLayout(new BorderLayout());
         JPanel prototipoImg = new Background.imgMainPanel("/images/prototipo2.jpg");
         JPanel riverImg = new Background.imgMainPanel("/images/rioManzanaresc.jpg");
+        prototipoImg.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
+        riverImg.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
 
         //Título
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -79,6 +83,13 @@ public class Principal {
         riverPanel.add(riverImg);
         riverPanel.add(river);
 
+        ArduinoReader lector = new ArduinoReader();
+        lector.iniciarLectura();
+
+        double phNumber = lector.getPh();
+        double tempNumber = lector.getTemperatura();
+        double tdsNumber = lector.getTds();
+
         //Explicacion PH
         JLabel introPh = new JLabel();
         introPh.setForeground(Color.WHITE);
@@ -86,21 +97,21 @@ public class Principal {
         introPh.setAlignmentX(Component.CENTER_ALIGNMENT);
         introPh.setOpaque(true);
         introPh.setBackground(new Color(0, 0, 0, 128));
+        introPh.setPreferredSize(new Dimension(800, 100));
         introPh.setText("""
             <html>
-            <div style='width:1100px; text-align:center;'>
-                <b>Nivel de pH</b><br><br>
-            </div>
+            <center>
+            Nivel de pH
+            </center>
             </html>
             """);
         introPh.setFont(new Font("Arial", Font.BOLD, 28));
 
         JLabel explicationPh = new JLabel();
         explicationPh.setForeground(Color.WHITE);
-        explicationPh.setHorizontalAlignment(SwingConstants.CENTER);
-        explicationPh.setAlignmentX(Component.CENTER_ALIGNMENT);
         explicationPh.setOpaque(true);
         explicationPh.setBackground(new Color(0, 0, 0, 128));
+        explicationPh.setPreferredSize(new Dimension(800, 500));
         explicationPh.setText("""
                 <html>
                 <div style='width:500px'>
@@ -116,35 +127,28 @@ public class Principal {
                 """);
         explicationPh.setFont(new Font("Arial", Font.PLAIN, 28));
 
+        JLabel phLabel = new TranslucentLabel();
+        JLabel temp = new TranslucentLabel();
+        JLabel tds = new TranslucentLabel();
 
         //Cuadro PH
         JPanel mainPhPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 100, 100));
         mainPhPanel.setOpaque(false);
 
-        double phNumber = 7.9;
         JPanel phPanel = new JPanel();
         phPanel.setOpaque(true);
         phPanel.setPreferredSize(new Dimension(400, 400));
 
-        JLabel ph = new JLabel();
-        ph.setHorizontalAlignment(SwingConstants.CENTER);
-        ph.setOpaque(true);
-        ph.setForeground(Color.WHITE);
-        ph.setBackground(new Color(0, 0, 0, 128));
-        ph.setPreferredSize(new Dimension(400, 100));
-        ph.setText(phNumber + "");
-        ph.setFont(new Font("Arial", Font.PLAIN, 28));
-
-        if(phNumber >= 7.82 && phNumber <= 7.9) {
-            phPanel.setBackground(Color.GREEN);
-        } else if ((phNumber >= 7.7 && phNumber < 7.82)||(phNumber > 7.9 && phNumber <= 8)) {
-            phPanel.setBackground(Color.YELLOW);
-        } else{
-            phPanel.setBackground(Color.RED);
-        }
+        phLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        phLabel.setOpaque(true);
+        phLabel.setForeground(Color.WHITE);
+        phLabel.setBackground(new Color(0, 0, 0, 128));
+        phLabel.setPreferredSize(new Dimension(400, 100));
+        phLabel.setText(phNumber + "");
+        phLabel.setFont(new Font("Arial", Font.PLAIN, 28));
 
         mainPhPanel.add(phPanel);
-        mainPhPanel.add(ph);
+        mainPhPanel.add(phLabel);
 
         //Explicacion TEMPERATURA
         JLabel introTemp = new JLabel();
@@ -190,12 +194,10 @@ public class Principal {
         JPanel mainTempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 100, 100));
         mainTempPanel.setOpaque(false);
 
-        double tempNumber = 20;
         JPanel tempPanel = new JPanel();
         tempPanel.setOpaque(true);
         tempPanel.setPreferredSize(new Dimension(400, 400));
 
-        JLabel temp = new JLabel();
         temp.setHorizontalAlignment(SwingConstants.CENTER);
         temp.setOpaque(true);
         temp.setForeground(Color.WHITE);
@@ -203,14 +205,6 @@ public class Principal {
         temp.setPreferredSize(new Dimension(400, 100));
         temp.setText(tempNumber + "");
         temp.setFont(new Font("Arial", Font.PLAIN, 28));
-
-        if(tempNumber >= 22 && tempNumber <= 26) {
-            tempPanel.setBackground(Color.GREEN);
-        } else if ((tempNumber < 22)) {
-            tempPanel.setBackground(Color.BLUE);
-        } else{
-            tempPanel.setBackground(Color.RED);
-        }
 
         mainTempPanel.add(tempPanel);
         mainTempPanel.add(temp);
@@ -252,17 +246,15 @@ public class Principal {
 
 
 
-        //Temperatura panel
+        //TDS panel
 
         JPanel mainTDSPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 100, 100));
         mainTDSPanel.setOpaque(false);
 
-        double tdsNumber = 20;
         JPanel tdsPanel = new JPanel();
         tdsPanel.setOpaque(true);
         tdsPanel.setPreferredSize(new Dimension(400, 400));
 
-        JLabel tds = new JLabel();
         tds.setHorizontalAlignment(SwingConstants.CENTER);
         tds.setOpaque(true);
         tds.setForeground(Color.WHITE);
@@ -271,16 +263,40 @@ public class Principal {
         tds.setText(tdsNumber + "");
         tds.setFont(new Font("Arial", Font.PLAIN, 28));
 
-        if(tdsNumber < 50) {
-            tdsPanel.setBackground(Color.GREEN);
-        } else if ((tempNumber < 60)) {
-            tdsPanel.setBackground(Color.BLUE);
-        } else{
-            tdsPanel.setBackground(Color.RED);
-        }
-
         mainTDSPanel.add(tdsPanel);
         mainTDSPanel.add(tds);
+
+        Timer timer = new Timer(500, e -> {
+            double p = lector.getPh();
+            double t = lector.getTemperatura();
+            double s = lector.getTds();
+
+            phLabel.setText(String.format("%.2f", p));
+            temp.setText(String.format("%.1f °C", t));
+            tds.setText(String.format("%.0f ppm", s));
+
+            if (p >= 7.82 && p <= 7.9)
+                phPanel.setBackground(Color.GREEN);
+            else if ((p >= 7.7 && p < 7.82) || (p > 7.9 && p <= 8))
+                phPanel.setBackground(Color.YELLOW);
+            else
+                phPanel.setBackground(Color.RED);
+
+            if (t >= 22 && t <= 26)
+                tempPanel.setBackground(Color.GREEN);
+            else if (t < 22)
+                tempPanel.setBackground(Color.BLUE);
+            else
+                tempPanel.setBackground(Color.RED);
+
+            if (s < 50)
+                tdsPanel.setBackground(Color.GREEN);
+            else if (s < 60)
+                tdsPanel.setBackground(Color.BLUE);
+            else
+                tdsPanel.setBackground(Color.RED);
+        });
+        timer.start();
 
 
 
@@ -320,8 +336,8 @@ public class Principal {
         contentPanel.add(Box.createVerticalStrut(30));
         contentPanel.add(mainPhPanel);
         contentPanel.add(Box.createVerticalStrut(30));
-        contentPanel.add(Box.createVerticalStrut(30));
         contentPanel.add(introTemp);
+        contentPanel.add(Box.createVerticalStrut(30));
         contentPanel.add(explicationTemp);
         contentPanel.add(Box.createVerticalStrut(30));
         contentPanel.add(mainTempPanel);
